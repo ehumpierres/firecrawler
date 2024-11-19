@@ -4,5 +4,4 @@ pymongo
 requests
 python-dotenv
 tenacity
-dnspython
-dnspython>=3.0.0
+dnspython>=2.0.0,<3.0.0
