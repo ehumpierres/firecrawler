@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 import os
 from dotenv import load_dotenv
 from app.exceptions import DatabaseError
@@ -40,8 +40,8 @@ def save_scraping_job(url):
         job = {
             "url": url,
             "status": "pending",
-            "created_at": datetime.now(UTC),
-            "updated_at": datetime.now(UTC)
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
         }
         job_id = db.scraping_jobs.insert_one(job).inserted_id
         return str(job_id)
@@ -61,7 +61,7 @@ def save_structured_data(job_id, structured_data):
             "id": structured_data.get("id", ""),
             "metadata": structured_data.get("metadata", {}),
             "image_url": structured_data.get("image_url", ""),
-            "created_at": datetime.now(UTC)
+            "created_at": datetime.now(timezone.utc)
         }
         db.structured_data.insert_one(record)
     except OperationFailure as e:
@@ -77,7 +77,7 @@ def update_job_status(job_id, status):
     try:
         db.scraping_jobs.update_one(
             {"_id": job_id},
-            {"$set": {"status": status, "updated_at": datetime.now(UTC)}}
+            {"$set": {"status": status, "updated_at": datetime.now(timezone.utc)}}
         )
     except OperationFailure as e:
         raise DatabaseError(f"Failed to update job status: {str(e)}")
