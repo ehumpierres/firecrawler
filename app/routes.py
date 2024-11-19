@@ -4,6 +4,7 @@ from app.firecrawl_client import scrape_with_firecrawl
 from app.claude_client import process_with_claude
 from app.mongo_handler import save_scraping_job, save_structured_data, update_job_status
 from app.exceptions import ScrapingError, ProcessingError, DatabaseError
+from app import db  # or wherever you initialized your db
 
 router = APIRouter()
 
@@ -40,8 +41,8 @@ async def handle_scraping_request(request: ScrapeRequest):
 @router.get("/health")
 async def health_check():
     try:
-        # Check MongoDB connection
-        db.scraping_jobs.find_one()
+        # Test DB connection
+        db.command('ping')
         return {"status": "healthy"}
     except Exception as e:
-        return {"status": "unhealthy", "error": str(e)}
+        return {"status": "unhealthy", "error": str(e)}, 500

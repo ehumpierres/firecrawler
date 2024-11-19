@@ -1,7 +1,8 @@
 fastapi
 uvicorn
-pymongo
 requests
 python-dotenv
 tenacity
 dnspython>=2.0.0,<3.0.0
+Flask-PyMongo>=2.3.0
+pymongo>=4.0.0
