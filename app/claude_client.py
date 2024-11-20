@@ -85,6 +85,7 @@ def process_with_claude(scraped_data):
                 "dimensions": processed_data.get("specifications", {}).get("dimensions", ""),
                 "wattage": processed_data.get("specifications", {}).get("wattage", ""),
                 "type": processed_data.get("specifications", {}).get("type", ""),
+                "material": processed_data.get("specifications", {}).get("material", ""),
             },
             "category": processed_data.get("category", ""),
             "price": processed_data.get("price", 0.0),

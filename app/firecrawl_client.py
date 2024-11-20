@@ -27,7 +27,8 @@ def scrape_with_firecrawl(url):
                                 "color": ".product-color",
                                 "dimensions": ".product-dimensions",
                                 "wattage": ".product-wattage",
-                                "type": ".product-type"
+                                "type": ".product-type",
+                                "material": ".product-material"
                             },
                             "category": ".product-category",
                             "price": ".product-price",

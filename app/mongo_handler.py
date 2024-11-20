@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import os
 from dotenv import load_dotenv
 from app.exceptions import DatabaseError
+from bson.objectid import ObjectId
 
 load_dotenv()
 
@@ -29,55 +30,38 @@ except DatabaseError as e:
     print(f"Warning: Database initialization failed: {e}")
     db = None
 
-def save_scraping_job(url):
-    """
-    Saves the scraping job metadata to the database.
-    """
-    if not db:
-        raise DatabaseError("Database connection not initialized")
-    
-    try:
-        job = {
-            "url": url,
-            "status": "pending",
-            "created_at": datetime.now(timezone.utc),
-            "updated_at": datetime.now(timezone.utc)
-        }
-        job_id = db.scraping_jobs.insert_one(job).inserted_id
-        return str(job_id)
-    except OperationFailure as e:
-        raise DatabaseError(f"Failed to save scraping job: {str(e)}")
+def save_scraping_job(url: str) -> str:
+    """Create a new scraping job"""
+    result = db.jobs.insert_one({
+        "url": url,
+        "status": "pending",
+        "created_at": datetime.utcnow()
+    })
+    return str(result.inserted_id)
 
-def save_structured_data(job_id, structured_data):
-    """
-    Saves the structured data to the database.
-    """
-    if not db:
-        raise DatabaseError("Database connection not initialized")
-    
-    try:
-        record = {
-            "_id": job_id,
-            "id": structured_data.get("id", ""),
-            "metadata": structured_data.get("metadata", {}),
-            "image_url": structured_data.get("image_url", ""),
-            "created_at": datetime.now(timezone.utc)
-        }
-        db.structured_data.insert_one(record)
-    except OperationFailure as e:
-        raise DatabaseError(f"Failed to save structured data: {str(e)}")
+def get_scraping_job(job_id: str) -> dict:
+    """Retrieve a job and its data"""
+    return db.jobs.find_one({"_id": ObjectId(job_id)})
 
-def update_job_status(job_id, status):
-    """
-    Updates the status of the scraping job.
-    """
-    if not db:
-        raise DatabaseError("Database connection not initialized")
-    
-    try:
-        db.scraping_jobs.update_one(
-            {"_id": job_id},
-            {"$set": {"status": status, "updated_at": datetime.now(timezone.utc)}}
-        )
-    except OperationFailure as e:
-        raise DatabaseError(f"Failed to update job status: {str(e)}")
+def save_structured_data(job_id: str, data: dict, raw: bool = False) -> None:
+    """Save data to the job document"""
+    update_data = {
+        "raw_data" if raw else "processed_data": data,
+        "updated_at": datetime.utcnow()
+    }
+    db.jobs.update_one(
+        {"_id": ObjectId(job_id)},
+        {"$set": update_data}
+    )
+
+def update_job_status(job_id: str, status: str) -> None:
+    """Update job status"""
+    db.jobs.update_one(
+        {"_id": ObjectId(job_id)},
+        {
+            "$set": {
+                "status": status,
+                "updated_at": datetime.utcnow()
+            }
+        }
+    )
