@@ -34,18 +34,27 @@ def save_scraping_job(db, scrape_result: dict) -> str:
     """
     Create a new scraping job and save scraping results
     """
-    job_data = {
-        "url": scrape_result.get('url'),
-        "status": "scraped",
-        "raw_html": scrape_result.get('raw_html', ''),
-        "markdown": scrape_result.get('markdown', ''),
-        "metadata": scrape_result.get('metadata', {}),
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
-    }
+    try:
+        job_data = {
+            "url": scrape_result.get('url'),
+            "status": "scraped",
+            "raw_html": scrape_result.get('raw_html', ''),
+            "markdown": scrape_result.get('markdown', ''),
+            "metadata": scrape_result.get('metadata', {}),
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
 
-    result = db.jobs.insert_one(job_data)
-    return str(result.inserted_id)
+        print(f"Attempting to save to MongoDB: {job_data.keys()}")  # Debug print
+        
+        result = db.jobs.insert_one(job_data)
+        print(f"MongoDB insert result: {result.inserted_id}")  # Debug print
+        
+        return str(result.inserted_id)
+        
+    except Exception as e:
+        print(f"MongoDB save error: {str(e)}")  # Debug print
+        raise DatabaseError(f"Failed to save to MongoDB: {str(e)}")
 
 def get_scraping_job(job_id: str) -> dict:
     """Retrieve a job and its data"""
