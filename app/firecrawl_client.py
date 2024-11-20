@@ -17,20 +17,21 @@ def scrape_with_firecrawl(url: str):
         # Initialize the FirecrawlApp with API key
         app = FirecrawlApp(api_key=api_key)
         
-        # Add proper scroll parameters according to API docs
+        # Ensure URL is a string
+        url = str(url).lstrip('@')
+        
+        # Get both HTML and Markdown with scroll
         result = app.scrape_url(
-            url_str,
+            url,
             {
                 'type': 'scroll',
                 'direction': 'down',
-                'amount': 2000  # Try a larger scroll to capture more products
+                'amount': 2000
             }
         )
         
-        print(f"Raw Firecrawl response: {result}")  # Debug print
-        
         return {
-            "url": url_str,
+            "url": url,
             "raw_html": result.get('html', ''),
             "markdown": result.get('markdown', ''),
             "status": "scraped"
