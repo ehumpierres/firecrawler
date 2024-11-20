@@ -23,17 +23,20 @@ def scrape_with_firecrawl(url: str):
             "onlyMainContent": True,
             "extract": {
                 "schema": {
-                    "name": "name",
-                    "description": "description",
-                    "color": "color",
-                    "width_diameter": "Width/Dia",
-                    "height": "Height",
-                    "wattage": "wattage",
-                    "product_type": "Type",
-                    "material": "material",
-                    "price": "List Price",
-                    "sku": "SKU",
-                    "image_url": "image_url"
+                    "type": "object",
+                    "properties": {
+                        "name": { "type": "string" },
+                        "description": { "type": "string" },
+                        "color": { "type": "string" },
+                        "width_diameter": { "type": "string" },
+                        "height": { "type": "string" },
+                        "wattage": { "type": "string" },
+                        "product_type": { "type": "string" },
+                        "material": { "type": "string" },
+                        "price": { "type": "string" },
+                        "sku": { "type": "string" },
+                        "image_url": { "type": "string" }
+                    }
                 }
             },
             "actions": [
