@@ -90,7 +90,9 @@ async def get_job_results(job_id: str):
             "status": job_data["status"],
             "url": job_data["url"],
             "created_at": job_data["created_at"],
-            "raw_data": job_data.get("raw_data"),
+            "raw_html": job_data.get("raw_html"),
+            "markdown": job_data.get("markdown"),
+            "extracted_data": job_data.get("extracted_data"),
             "processed_data": job_data.get("processed_data"),
             "updated_at": job_data.get("updated_at")
         }

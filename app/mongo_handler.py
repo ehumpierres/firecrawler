@@ -40,20 +40,20 @@ def save_scraping_job(db, scrape_result: dict) -> str:
             "status": "scraped",
             "raw_html": scrape_result.get('raw_html', ''),
             "markdown": scrape_result.get('markdown', ''),
-            "metadata": scrape_result.get('metadata', {}),
+            "extracted_data": scrape_result.get('extracted_data', {}),
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
         }
 
-        print(f"Attempting to save to MongoDB: {job_data.keys()}")  # Debug print
+        print(f"Attempting to save to MongoDB: {job_data.keys()}")
         
         result = db.jobs.insert_one(job_data)
-        print(f"MongoDB insert result: {result.inserted_id}")  # Debug print
+        print(f"MongoDB insert result: {result.inserted_id}")
         
         return str(result.inserted_id)
         
     except Exception as e:
-        print(f"MongoDB save error: {str(e)}")  # Debug print
+        print(f"MongoDB save error: {str(e)}")
         raise DatabaseError(f"Failed to save to MongoDB: {str(e)}")
 
 def get_scraping_job(job_id: str) -> dict:

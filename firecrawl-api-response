@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "data": {
+    "markdown": "<string>",
+    "html": "<string>",
+    "rawHtml": "<string>",
+    "screenshot": "<string>",
+    "links": [
+      "<string>"
+    ],
+    "actions": {
+      "screenshots": [
+        "<string>"
+      ]
+    },
+    "metadata": {
+      "title": "<string>",
+      "description": "<string>",
+      "language": "<string>",
+      "sourceURL": "<string>",
+      "<any other metadata> ": "<string>",
+      "statusCode": 123,
+      "error": "<string>"
+    },
+    "llm_extraction": {},
+    "warning": "<string>"
+  }
+}
