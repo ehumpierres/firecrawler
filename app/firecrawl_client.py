@@ -1,5 +1,4 @@
 from app.exceptions import ScrapingError
-from app.schemas import ProductSchema
 from firecrawl import FirecrawlApp
 import os
 from dotenv import load_dotenv
@@ -18,14 +17,19 @@ def scrape_with_firecrawl(url: str):
         # Initialize the FirecrawlApp with API key
         app = FirecrawlApp(api_key=api_key)
         
-        # Perform the scraping with minimal params first
+        # Get both HTML and Markdown
         result = app.scrape_url(
             url,
-            params={'formats': ['markdown', 'html']}  # Simplified to match documentation example
+            params={'formats': ['markdown', 'html']}
         )
         
-        # Validate and return the data
-        return ProductSchema(**result)
+        # Return data structure with both formats
+        return {
+            "url": url,
+            "raw_html": result.get('html', ''),
+            "markdown": result.get('markdown', ''),
+            "status": "scraped"
+        }
         
     except Exception as e:
         raise ScrapingError(f"Firecrawl API error: {str(e)}")

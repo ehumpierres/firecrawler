@@ -30,13 +30,25 @@ except DatabaseError as e:
     print(f"Warning: Database initialization failed: {e}")
     db = None
 
-def save_scraping_job(url: str) -> str:
-    """Create a new scraping job"""
-    result = db.jobs.insert_one({
+def save_scraping_job(url: str, scrape_result: dict = None) -> str:
+    """
+    Create a new scraping job and save scraping results if provided
+    """
+    job_data = {
         "url": url,
-        "status": "pending",
-        "created_at": datetime.utcnow()
-    })
+        "status": "scraped" if scrape_result else "pending",
+        "created_at": datetime.utcnow(),
+        "updated_at": datetime.utcnow()
+    }
+
+    # If we have scraping results, add them to the job data
+    if scrape_result:
+        job_data.update({
+            "raw_html": scrape_result.get('raw_html', ''),
+            "markdown": scrape_result.get('markdown', ''),
+        })
+
+    result = db.jobs.insert_one(job_data)
     return str(result.inserted_id)
 
 def get_scraping_job(job_id: str) -> dict:

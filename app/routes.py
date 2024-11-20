@@ -15,32 +15,23 @@ class ProcessRequest(BaseModel):
     job_id: str
 
 @router.post("/scrape")
-async def handle_scraping_request(request: ScrapeRequest):
-    """First endpoint: Handle the scraping with Firecrawl"""
+async def scrape_url(request: ScrapeRequest):
     try:
-        # 1. Creates initial job record in MongoDB
-        job_id = save_scraping_job(str(request.url))
+        # Scrape the URL
+        scraped_data = scrape_with_firecrawl(request.url)
         
-        # Perform scraping
-        scraped_data = scrape_with_firecrawl(str(request.url))
-        
-        # 2. Saves the raw scraped data to MongoDB
-        save_structured_data(job_id, scraped_data, raw=True)
-        update_job_status(job_id, "scraped")
+        # Save to MongoDB with the scraped data
+        job_id = save_scraping_job(request.url, scraped_data)
         
         return {
-            "job_id": job_id, 
+            "job_id": str(job_id),
             "status": "scraped",
-            "message": "Data scraped successfully. Call /process with this job_id to process with Claude."
+            "message": "Data scraped successfully"
         }
-    
+        
     except ScrapingError as e:
-        if 'job_id' in locals():
-            update_job_status(job_id, "failed")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        if 'job_id' in locals():
-            update_job_status(job_id, "failed")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/process")
