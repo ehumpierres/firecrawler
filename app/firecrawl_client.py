@@ -17,19 +17,27 @@ def scrape_with_firecrawl(url: str):
         # Initialize the FirecrawlApp with API key
         app = FirecrawlApp(api_key=api_key)
         
+        # Ensure URL is a string
+        url_str = str(url)
+        
         # Get both HTML and Markdown
-        result = app.scrape_url(
-            url,
+        response = app.scrape_url(
+            url_str,
             params={'formats': ['markdown', 'html']}
         )
         
-        # Return data structure with both formats
-        return {
-            "url": url,
-            "raw_html": result.get('html', ''),
-            "markdown": result.get('markdown', ''),
-            "status": "scraped"
-        }
+        # Extract data from the nested structure
+        if response.get('success') and 'data' in response:
+            data = response['data']
+            return {
+                "url": url_str,
+                "raw_html": data.get('html', ''),
+                "markdown": data.get('markdown', ''),
+                "metadata": data.get('metadata', {}),  # Also storing metadata
+                "status": "scraped"
+            }
+        else:
+            raise ScrapingError("Failed to get valid response from Firecrawl")
         
     except Exception as e:
         raise ScrapingError(f"Firecrawl API error: {str(e)}")

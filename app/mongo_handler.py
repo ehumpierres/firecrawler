@@ -35,10 +35,11 @@ def save_scraping_job(db, scrape_result: dict) -> str:
     Create a new scraping job and save scraping results
     """
     job_data = {
-        "url": scrape_result.get('url'),  # Get URL from the scrape_result
+        "url": scrape_result.get('url'),
         "status": "scraped",
         "raw_html": scrape_result.get('raw_html', ''),
         "markdown": scrape_result.get('markdown', ''),
+        "metadata": scrape_result.get('metadata', {}),
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
     }
