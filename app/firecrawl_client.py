@@ -14,21 +14,10 @@ def scrape_with_firecrawl(url: str):
         raise ScrapingError("FIRECRAWL_API_KEY environment variable is not set")
     
     try:
-        # Initialize the FirecrawlApp with API key
         app = FirecrawlApp(api_key=api_key)
         
-        # Ensure URL is a string
-        url = str(url).lstrip('@')
-        
-        # Get both HTML and Markdown with scroll
-        result = app.scrape_url(
-            url,
-            {
-                'type': 'scroll',
-                'direction': 'down',
-                'amount': 2000
-            }
-        )
+        # Basic call with just the URL
+        result = app.scrape_url(url)
         
         return {
             "url": url,
