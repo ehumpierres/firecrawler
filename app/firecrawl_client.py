@@ -18,55 +18,31 @@ def scrape_with_firecrawl(url: str):
         # Initialize the FirecrawlApp with API key
         app = FirecrawlApp(api_key=api_key)
         
-        # Create scraping configuration using our existing schema
-        scrape_config = {
-            'formats': ['extract'],
-            'extract': {
-                'schema': ProductSchema.model_json_schema(),
-                'selectors': {
-                    'id': '.product-id',
-                    'metadata': {
-                        'name': '.product-name',
-                        'description': '.product-description',
-                        'specifications': {
-                            'color': '.product-color',
-                            'dimensions': '.product-dimensions',
-                            'wattage': '.product-wattage',
-                            'type': '.product-type',
-                            'material': '.product-material'
-                        },
-                        'category': '.product-category',
-                        'price': '.product-price',
-                        'sku': '.product-sku'
-                    },
-                    'image_url': '.product-image'
-                }
-            }
-        }
-        
-        # Perform the scraping - pass parameters directly, not as config
+        # Perform the scraping with params
         result = app.scrape_url(
-            url=url,
-            formats=['extract'],
-            extract={
-                'schema': ProductSchema.model_json_schema(),
-                'selectors': {
-                    'id': '.product-id',
-                    'metadata': {
-                        'name': '.product-name',
-                        'description': '.product-description',
-                        'specifications': {
-                            'color': '.product-color',
-                            'dimensions': '.product-dimensions',
-                            'wattage': '.product-wattage',
-                            'type': '.product-type',
-                            'material': '.product-material'
+            url,
+            params={
+                'formats': ['extract'],
+                'extract': {
+                    'schema': ProductSchema.model_json_schema(),
+                    'selectors': {
+                        'id': '.product-id',
+                        'metadata': {
+                            'name': '.product-name',
+                            'description': '.product-description',
+                            'specifications': {
+                                'color': '.product-color',
+                                'dimensions': '.product-dimensions',
+                                'wattage': '.product-wattage',
+                                'type': '.product-type',
+                                'material': '.product-material'
+                            },
+                            'category': '.product-category',
+                            'price': '.product-price',
+                            'sku': '.product-sku'
                         },
-                        'category': '.product-category',
-                        'price': '.product-price',
-                        'sku': '.product-sku'
-                    },
-                    'image_url': '.product-image'
+                        'image_url': '.product-image'
+                    }
                 }
             }
         )
