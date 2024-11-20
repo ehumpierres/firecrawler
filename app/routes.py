@@ -20,8 +20,8 @@ async def scrape_url(request: ScrapeRequest):
         # Scrape the URL
         scraped_data = scrape_with_firecrawl(request.url)
         
-        # Save to MongoDB with the scraped data
-        job_id = save_scraping_job(request.url, scraped_data)
+        # Save to MongoDB
+        job_id = save_scraping_job(db, scraped_data)
         
         return {
             "job_id": str(job_id),
