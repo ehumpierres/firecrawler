@@ -8,9 +8,9 @@ from app.exceptions import DatabaseError
 load_dotenv()
 
 def get_database():
-    mongodb_uri = os.getenv('MONGODB_URI')
+    mongodb_uri = os.getenv('MONGO_URI')
     if not mongodb_uri:
-        raise DatabaseError("MONGODB_URI environment variable is not set")
+        raise DatabaseError("MONGO_URI environment variable is not set")
     
     try:
         client = MongoClient(mongodb_uri)
