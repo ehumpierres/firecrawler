@@ -18,37 +18,14 @@ def scrape_with_firecrawl(url: str):
         # Initialize the FirecrawlApp with API key
         app = FirecrawlApp(api_key=api_key)
         
-        # Perform the scraping with params
+        # Perform the scraping with minimal params first
         result = app.scrape_url(
             url,
-            params={
-                'formats': ['extract'],
-                'extract': {
-                    'schema': ProductSchema.model_json_schema(),
-                    'selectors': {
-                        'id': '.product-id',
-                        'metadata': {
-                            'name': '.product-name',
-                            'description': '.product-description',
-                            'specifications': {
-                                'color': '.product-color',
-                                'dimensions': '.product-dimensions',
-                                'wattage': '.product-wattage',
-                                'type': '.product-type',
-                                'material': '.product-material'
-                            },
-                            'category': '.product-category',
-                            'price': '.product-price',
-                            'sku': '.product-sku'
-                        },
-                        'image_url': '.product-image'
-                    }
-                }
-            }
+            params={'formats': ['markdown', 'html']}  # Simplified to match documentation example
         )
         
         # Validate and return the data
-        return ProductSchema(**result["extract"])
+        return ProductSchema(**result)
         
     except Exception as e:
         raise ScrapingError(f"Firecrawl API error: {str(e)}")
