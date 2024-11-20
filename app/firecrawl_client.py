@@ -1,57 +1,57 @@
 from app.exceptions import ScrapingError
 from app.schemas import ProductSchema
-import requests
+from firecrawl import FirecrawlApp
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-def scrape_with_firecrawl(url):
+def scrape_with_firecrawl(url: str):
+    """
+    Scrape product data using Firecrawl API
+    """
     api_key = os.getenv('FIRECRAWL_API_KEY')
     if not api_key:
         raise ScrapingError("FIRECRAWL_API_KEY environment variable is not set")
+    
+    try:
+        # Initialize the FirecrawlApp with API key
+        app = FirecrawlApp(api_key=api_key)
         
-    # Define the extraction schema based on our ProductSchema
-    request_body = {
-        "url": url,  # URL from the function parameter
-        "formats": ["extract"],
-        "extract": {
-            "schema": {
-                "product": {
-                    "container": ".product-container",
-                    "fields": {
-                        "id": ".product-id",
-                        "metadata": {
-                            "name": ".product-name",
-                            "description": ".product-description",
-                            "specifications": {
-                                "color": ".product-color",
-                                "dimensions": ".product-dimensions",
-                                "wattage": ".product-wattage",
-                                "type": ".product-type",
-                                "material": ".product-material"
-                            },
-                            "category": ".product-category",
-                            "price": ".product-price",
-                            "sku": ".product-sku"
+        # Create scraping configuration using our existing schema
+        scrape_config = {
+            'formats': ['extract'],
+            'extract': {
+                'schema': ProductSchema.model_json_schema(),
+                'selectors': {
+                    'id': '.product-id',
+                    'metadata': {
+                        'name': '.product-name',
+                        'description': '.product-description',
+                        'specifications': {
+                            'color': '.product-color',
+                            'dimensions': '.product-dimensions',
+                            'wattage': '.product-wattage',
+                            'type': '.product-type',
+                            'material': '.product-material'
                         },
-                        "image_url": ".product-image"
-                    }
+                        'category': '.product-category',
+                        'price': '.product-price',
+                        'sku': '.product-sku'
+                    },
+                    'image_url': '.product-image'
                 }
             }
         }
-    }
         
-    try:
-        response = requests.post(
-            "https://api.firecrawl.dev/scrape",
-            json=request_body,  # Send the complete request body
-            headers={"Authorization": f"Bearer {api_key}"}
+        # Perform the scraping
+        result = app.scrape_url(
+            url=url,
+            config=scrape_config
         )
-        response.raise_for_status()
         
-        # Validate response against our schema
-        data = response.json()
-        return ProductSchema(**data["extract"])
-    except requests.exceptions.RequestException as e:
+        # Validate and return the data
+        return ProductSchema(**result["extract"])
+        
+    except Exception as e:
         raise ScrapingError(f"Firecrawl API error: {str(e)}")

@@ -6,6 +6,7 @@ class ProductSpecifications(BaseModel):
     dimensions: Optional[str]
     wattage: Optional[str]
     type: Optional[str]
+    material: Optional[str]
 
 class ProductMetadata(BaseModel):
     name: str
