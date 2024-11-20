@@ -12,7 +12,8 @@ def scrape_with_firecrawl(url):
         raise ScrapingError("FIRECRAWL_API_KEY environment variable is not set")
         
     # Define the extraction schema based on our ProductSchema
-    scrape_config = {
+    request_body = {
+        "url": url,  # URL from the function parameter
         "formats": ["extract"],
         "extract": {
             "schema": {
@@ -43,11 +44,8 @@ def scrape_with_firecrawl(url):
         
     try:
         response = requests.post(
-            "https://api.firecrawl.dev/v1/scrape",
-            json={
-                "url": url,
-                **scrape_config
-            },
+            "https://api.firecrawl.dev/scrape",
+            json=request_body,  # Send the complete request body
             headers={"Authorization": f"Bearer {api_key}"}
         )
         response.raise_for_status()
