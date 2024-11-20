@@ -44,10 +44,31 @@ def scrape_with_firecrawl(url: str):
             }
         }
         
-        # Perform the scraping
+        # Perform the scraping - pass parameters directly, not as config
         result = app.scrape_url(
             url=url,
-            config=scrape_config
+            formats=['extract'],
+            extract={
+                'schema': ProductSchema.model_json_schema(),
+                'selectors': {
+                    'id': '.product-id',
+                    'metadata': {
+                        'name': '.product-name',
+                        'description': '.product-description',
+                        'specifications': {
+                            'color': '.product-color',
+                            'dimensions': '.product-dimensions',
+                            'wattage': '.product-wattage',
+                            'type': '.product-type',
+                            'material': '.product-material'
+                        },
+                        'category': '.product-category',
+                        'price': '.product-price',
+                        'sku': '.product-sku'
+                    },
+                    'image_url': '.product-image'
+                }
+            }
         )
         
         # Validate and return the data
