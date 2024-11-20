@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, AnyHttpUrl
 from app.firecrawl_client import scrape_with_firecrawl
 from app.claude_client import process_with_claude
 from app.mongo_handler import save_scraping_job, save_structured_data, update_job_status, get_scraping_job
@@ -9,7 +9,7 @@ from app import db
 router = APIRouter()
 
 class ScrapeRequest(BaseModel):
-    url: HttpUrl
+    url: str
 
 class ProcessRequest(BaseModel):
     job_id: str
@@ -17,8 +17,9 @@ class ProcessRequest(BaseModel):
 @router.post("/scrape")
 async def scrape_url(request: ScrapeRequest):
     try:
+        url = request.url
         # Scrape the URL
-        scraped_data = scrape_with_firecrawl(request.url)
+        scraped_data = scrape_with_firecrawl(url)
         
         # Save to MongoDB
         job_id = save_scraping_job(db, scraped_data)
