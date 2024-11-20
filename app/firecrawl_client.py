@@ -29,7 +29,7 @@ def scrape_with_firecrawl(url: str):
                     "width_diameter": "Width/Dia",
                     "height": "Height",
                     "wattage": "wattage",
-                    "type": "Type",
+                    "product_type": "Type",
                     "material": "material",
                     "price": "List Price",
                     "sku": "SKU",

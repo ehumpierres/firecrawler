@@ -28,7 +28,7 @@ class ExtractedData(BaseModel):
     width_diameter: Optional[str]
     height: Optional[str]
     wattage: Optional[str]
-    type: Optional[str]
+    product_type: Optional[str]
     material: Optional[str]
     price: Optional[str]
     sku: Optional[str]
