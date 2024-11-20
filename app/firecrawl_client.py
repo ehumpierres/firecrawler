@@ -1,5 +1,5 @@
-from app.exceptions import ScrapingError
 from firecrawl import FirecrawlApp
+from app.exceptions import ScrapingError
 import os
 from dotenv import load_dotenv
 
@@ -20,24 +20,17 @@ def scrape_with_firecrawl(url: str):
         # Ensure URL is a string
         url_str = str(url)
         
-        # Get both HTML and Markdown
-        response = app.scrape_url(
-            url_str,
-            params={'formats': ['markdown', 'html']}
-        )
+        # Simple scrape request following the SDK example
+        result = app.scrape_url(url_str)
         
-        # Extract data from the nested structure
-        if response.get('success') and 'data' in response:
-            data = response['data']
-            return {
-                "url": url_str,
-                "raw_html": data.get('html', ''),
-                "markdown": data.get('markdown', ''),
-                "metadata": data.get('metadata', {}),  # Also storing metadata
-                "status": "scraped"
-            }
-        else:
-            raise ScrapingError("Failed to get valid response from Firecrawl")
+        print(f"Raw response: {result}")  # Debug print
+        
+        return {
+            "url": url_str,
+            "raw_html": result.get('html', ''),
+            "markdown": result.get('markdown', ''),
+            "status": "scraped"
+        }
         
     except Exception as e:
         raise ScrapingError(f"Firecrawl API error: {str(e)}")
